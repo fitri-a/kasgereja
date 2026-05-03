@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.kasgereja.app',
-  appName: 'kasgitgereja',
+  appName: 'Kas Gereja',
   webDir: 'www',
   plugins: {
     SplashScreen: {

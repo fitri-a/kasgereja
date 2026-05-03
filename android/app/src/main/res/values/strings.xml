@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Tugasuts</string>
-    <string name="title_activity_main">Tugasuts</string>
+    <string name="app_name">Kas Gereja</string>
+    <string name="title_activity_main">Kas Gereja</string>
     <string name="package_name">com.kasgereja.app</string>
     <string name="custom_url_scheme">com.kasgereja.app</string>
 </resources>
