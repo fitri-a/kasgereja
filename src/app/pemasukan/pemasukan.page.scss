@@ -1,0 +1,36 @@
+ion-content {
+  --background: #f4f6f9;
+}
+
+ion-item {
+  margin-bottom: 15px;
+  border-radius: 12px;
+  --background: #ffffff;
+  padding: 8px;
+}
+
+ion-label {
+  font-weight: 500;
+}
+
+ion-input {
+  font-size: 16px;
+}
+
+ion-select {
+  width: 100%;
+}
+
+/* Tombol simpan */
+ion-button {
+  margin-top: 20px;
+  border-radius: 12px;
+  font-weight: bold;
+  --background: #28a745;
+  height: 48px;
+}
+
+/* Efek klik */
+ion-button:active {
+  transform: scale(0.97);
+}

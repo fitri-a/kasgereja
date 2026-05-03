@@ -1,0 +1,36 @@
+ion-content {
+  --background: #f4f6f9;
+}
+
+ion-item {
+  margin: 10px;
+  border-radius: 12px;
+  --background: #ffffff;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+/* Judul kategori */
+ion-label h2 {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Tanggal */
+ion-label p {
+  font-size: 13px;
+  color: gray;
+}
+
+/* Badge nominal */
+ion-badge {
+  font-size: 14px;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+/* Empty state */
+.empty {
+  text-align: center;
+  margin-top: 50%;
+  color: gray;
+}

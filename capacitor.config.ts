@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'Tugasuts',
+  appId: 'com.kasgereja.app',
+  appName: 'kasgitgereja',
   webDir: 'www'
 };
 

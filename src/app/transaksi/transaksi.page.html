@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar>
+
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Transaksi</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <!-- 🔥 FILTER -->
+  <ion-segment [(ngModel)]="filter" (ionChange)="filterData()">
+    <ion-segment-button value="semua">
+      <ion-label>Semua</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="masuk">
+      <ion-label>💰 Masuk</ion-label>
+    </ion-segment-button>
+
+    <ion-segment-button value="keluar">
+      <ion-label>💸 Keluar</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- 🔥 LIST -->
+  <ion-list *ngIf="dataFilter.length > 0; else kosong">
+    <ion-item *ngFor="let t of dataFilter">
+
+      <ion-label>
+        <h2>{{ t.kategori }}</h2>
+        <p>{{ t.tanggal }}</p>
+      </ion-label>
+
+      <ion-badge [color]="t.tipe === 'masuk' ? 'success' : 'danger'">
+        {{ t.tipe === 'masuk' ? '+' : '-' }} Rp. {{ t.nominal | number:'1.0-0' }}
+      </ion-badge>
+
+    </ion-item>
+  </ion-list>
+
+  <ng-template #kosong>
+    <div class="empty">
+      <p>Belum ada transaksi</p>
+    </div>
+  </ng-template>
+
+</ion-content>

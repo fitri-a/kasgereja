@@ -1,20 +1,66 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      Blank
+
+    <ion-title class="title-with-icon">
+      ⛪ Kas Gereja
     </ion-title>
+
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <!-- CARD SALDO -->
+  <div class="saldo-box">
+  <h2>Total Saldo</h2>
+  <h1>Rp. {{ totalSaldo | number:'1.0-0' }}</h1>
+
+  <div class="detail">
+    <div class="item">
+      <p class="label">Pemasukan</p>
+      <p class="masuk">+ Rp. {{ totalPemasukan | number:'1.0-0' }}</p>
+    </div>
+
+    <div class="item">
+      <p class="label">Pengeluaran</p>
+      <p class="keluar">- Rp. {{ totalPengeluaran | number:'1.0-0' }}</p>
+    </div>
   </div>
+</div>
+
+  <!-- BUTTON PEMASUKAN -->
+  <ion-button expand="block" (click)="goToPemasukan()">
+    <ion-icon name="cash-outline" slot="start"></ion-icon>
+    Pemasukan
+  </ion-button>
+
+  <!-- BUTTON PENGELUARAN -->
+  <ion-button expand="block" color="danger" (click)="goToPengeluaran()">
+    <ion-icon name="card-outline" slot="start"></ion-icon>
+    Pengeluaran
+  </ion-button>
+
+
 </ion-content>
+
+<!-- FOOTER -->
+<ion-footer>
+  <ion-tab-bar slot="bottom">
+
+    <ion-tab-button [routerLink]="['/home']">
+      <ion-icon name="home"></ion-icon>
+      <ion-label>Home</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button [routerLink]="['/transaksi']">
+      <ion-icon name="list"></ion-icon>
+      <ion-label>Transaksi</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button [routerLink]="['/pengaturan']">
+      <ion-icon name="settings"></ion-icon>
+      <ion-label>Pengaturan</ion-label>
+    </ion-tab-button>
+
+  </ion-tab-bar>
+</ion-footer>
