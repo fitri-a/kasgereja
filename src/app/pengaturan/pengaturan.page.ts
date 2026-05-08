@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { jsPDF } from 'jspdf';
-import { AlertController } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
 import { DataService } from '../services/data.service';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 
 @Component({
   selector: 'app-pengaturan',
@@ -15,20 +17,43 @@ export class PengaturanPage {
   constructor(
     private router: Router,
     private alertController: AlertController,
-    private dataService: DataService
+    private dataService: DataService,
+    private platform: Platform
   ) {}
 
-  exportData() {
+  async exportData() {
     try {
       const data = this.dataService.getTransaksi();
-      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `kas-gereja-export-${new Date().getTime()}.json`;
-      a.click();
-      window.URL.revokeObjectURL(url);
-      alert('✅ Data berhasil diekspor ke JSON');
+      const content = JSON.stringify(data);
+      const fileName = `kas-gereja-export-${new Date().getTime()}.json`;
+
+      if (this.platform.is('hybrid')) {
+        // Simpan ke Cache dulu
+        const result = await Filesystem.writeFile({
+          path: fileName,
+          data: content,
+          directory: Directory.Cache,
+          encoding: Encoding.UTF8,
+        });
+
+        // Buka dialog Share agar user bisa pilih folder (Save to Files/Copy to)
+        await Share.share({
+          title: 'Ekspor Data Kas Gereja',
+          text: 'Pilih lokasi untuk menyimpan data ekspor',
+          url: result.uri,
+          dialogTitle: 'Simpan ke...',
+        });
+      } else {
+        // Cara browser biasa
+        const blob = new Blob([content], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        alert('✅ Data berhasil diekspor ke JSON');
+      }
     } catch (e) {
       console.error(e);
       alert('❌ Ekspor gagal');
