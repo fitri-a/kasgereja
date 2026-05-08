@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { jsPDF } from 'jspdf';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-pengaturan',
@@ -10,51 +11,90 @@ import { jsPDF } from 'jspdf';
 })
 export class PengaturanPage {
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private alertController: AlertController
+  ) {}
 
-  async backupData() {
+  exportData() {
     try {
-      const data = JSON.parse(localStorage.getItem('transaksi') || '[]');
-
-      const doc = new jsPDF();
-
-      // Judul
-      doc.setFontSize(16);
-      doc.text('Laporan Kas Gereja', 10, 10);
-
-      let y = 20;
-
-      // Jika kosong
-      if (data.length === 0) {
-        doc.text('Tidak ada data transaksi', 10, y);
-      } else {
-        data.forEach((item: any, i: number) => {
-          doc.setFontSize(10);
-
-          doc.text(
-            `${i + 1}. ${item.kategori} | ${item.tanggal} | Rp ${item.nominal}`,
-            10,
-            y
-          );
-
-          y += 8;
-
-          // pindah halaman jika penuh
-          if (y > 280) {
-            doc.addPage();
-            y = 20;
-          }
-        });
-      }
-
-      // 🔥 DOWNLOAD LANGSUNG
-      doc.save(`backup-kas-${Date.now()}.pdf`);
-
-      alert('✅ PDF berhasil didownload');
-
+      const data = localStorage.getItem('transaksi') || '[]';
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `kas-gereja-export-${new Date().getTime()}.json`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      alert('✅ Data berhasil diekspor ke JSON');
     } catch (e) {
       console.error(e);
-      alert('❌ Backup gagal');
+      alert('❌ Ekspor gagal');
+    }
+  }
+
+  importData() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = (event: any) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        try {
+          const content = e.target.result;
+          // Validasi sederhana
+          const parsed = JSON.parse(content);
+          if (Array.isArray(parsed)) {
+            localStorage.setItem('transaksi', content);
+            alert('✅ Data berhasil diimpor');
+            // Opsional: Reload halaman untuk melihat perubahan
+            window.location.reload();
+          } else {
+            alert('❌ Format file tidak valid (Harus array JSON)');
+          }
+        } catch (err) {
+          console.error(err);
+          alert('❌ Gagal membaca file atau format JSON salah');
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  }
+
+  async confirmHapus() {
+    const alert = await this.alertController.create({
+      header: 'Konfirmasi Hapus',
+      message: 'Apakah Anda yakin ingin menghapus semua data transaksi? Tindakan ini tidak dapat dibatalkan.',
+      buttons: [
+        {
+          text: 'Batal',
+          role: 'cancel'
+        },
+        {
+          text: 'Hapus',
+          role: 'destructive',
+          handler: () => {
+            this.hapusData();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  hapusData() {
+    try {
+      localStorage.removeItem('transaksi');
+      alert('✅ Semua data berhasil dihapus');
+      window.location.reload();
+    } catch (e) {
+      console.error(e);
+      alert('❌ Gagal menghapus data');
     }
   }
 
