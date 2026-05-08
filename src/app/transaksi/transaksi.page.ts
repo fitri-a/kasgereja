@@ -29,35 +29,9 @@ export class TransaksiPage {
     }
   }
 
-  // 🔥 AUTO HAPUS 27–29 HARI (TANPA ALERT)
-  cekPengingatBackup() {
-    const sekarang = new Date();
-
-    this.data = this.data.filter((item: any) => {
-      const tanggalData = new Date(item.tanggal);
-
-      if (isNaN(tanggalData.getTime())) return true;
-
-      const selisihHari =
-        (sekarang.getTime() - tanggalData.getTime()) /
-        (1000 * 60 * 60 * 24);
-
-      // 🔥 HAPUS LANGSUNG JIKA 27–29 HARI
-      if (selisihHari >= 27 && selisihHari < 30) {
-        return false; // ❌ hapus
-      }
-
-      return true; // ✅ tetap
-    });
-
-    localStorage.setItem('transaksi', JSON.stringify(this.data));
-    this.filterData();
-  }
-
   // 🔥 LIFE CYCLE
   ionViewWillEnter() {
     this.loadData();
     this.filterData();
-    this.cekPengingatBackup(); // 🔥 langsung hapus jika memenuhi
   }
 }
