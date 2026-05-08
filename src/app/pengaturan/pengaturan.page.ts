@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { jsPDF } from 'jspdf';
 import { AlertController } from '@ionic/angular';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-pengaturan',
@@ -13,13 +14,14 @@ export class PengaturanPage {
 
   constructor(
     private router: Router,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private dataService: DataService
   ) {}
 
   exportData() {
     try {
-      const data = localStorage.getItem('transaksi') || '[]';
-      const blob = new Blob([data], { type: 'application/json' });
+      const data = this.dataService.getTransaksi();
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -45,13 +47,10 @@ export class PengaturanPage {
       reader.onload = (e: any) => {
         try {
           const content = e.target.result;
-          // Validasi sederhana
           const parsed = JSON.parse(content);
           if (Array.isArray(parsed)) {
-            localStorage.setItem('transaksi', content);
+            this.dataService.importData(parsed);
             alert('✅ Data berhasil diimpor');
-            // Opsional: Reload halaman untuk melihat perubahan
-            window.location.reload();
           } else {
             alert('❌ Format file tidak valid (Harus array JSON)');
           }
@@ -89,9 +88,8 @@ export class PengaturanPage {
 
   hapusData() {
     try {
-      localStorage.removeItem('transaksi');
+      this.dataService.clearAllData();
       alert('✅ Semua data berhasil dihapus');
-      window.location.reload();
     } catch (e) {
       console.error(e);
       alert('❌ Gagal menghapus data');
@@ -101,4 +99,4 @@ export class PengaturanPage {
   goHome() {
     this.router.navigate(['/home']);
   }
-}
+}

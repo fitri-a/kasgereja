@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { DataService } from '../services/data.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -7,39 +9,34 @@ import { Router } from '@angular/router';
   styleUrls: ['./home.page.scss'],
   standalone: false,
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
 
   totalSaldo: number = 0;
   totalPemasukan: number = 0;
   totalPengeluaran: number = 0;
+  private dataSub?: Subscription;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private dataService: DataService
+  ) {}
 
   ngOnInit() {
-    this.hitungData();
-  }
-
-  ionViewWillEnter() {
-    this.hitungData(); // refresh tiap masuk halaman
-  }
-
-  // 🔥 HITUNG SEMUA DATA
-  hitungData() {
-    const data = JSON.parse(localStorage.getItem('transaksi') || '[]');
-
-    this.totalPemasukan = 0;
-    this.totalPengeluaran = 0;
-
-    data.forEach((item: any) => {
-      if (item.tipe === 'masuk') {
-        this.totalPemasukan += item.nominal;
-      } else {
-        this.totalPengeluaran += item.nominal;
-      }
+    // Berlangganan ke total saldo agar otomatis update
+    this.dataSub = this.dataService.totals$.subscribe(totals => {
+      this.totalPemasukan = totals.masuk;
+      this.totalPengeluaran = totals.keluar;
+      this.totalSaldo = totals.saldo;
     });
-
-    this.totalSaldo = this.totalPemasukan - this.totalPengeluaran;
   }
+
+  ngOnDestroy() {
+    if (this.dataSub) {
+      this.dataSub.unsubscribe();
+    }
+  }
+
+  // 🔥 Method hitungData dihapus karena sudah otomatis via subscription totals$
 
   // 🔁 NAVIGASI
   goToPemasukan() {

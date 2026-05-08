@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-pengeluaran',
@@ -13,10 +14,12 @@ export class PengeluaranPage {
   kategori: string = '';
   tanggal: string = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private dataService: DataService
+  ) {}
 
   simpanPengeluaran() {
-
     const nominalNumber = Number(this.nominal);
 
     if (!nominalNumber || nominalNumber <= 0) {
@@ -34,17 +37,13 @@ export class PengeluaranPage {
       return;
     }
 
-    const data = JSON.parse(localStorage.getItem('transaksi') || '[]');
-
-    data.push({
+    this.dataService.addTransaksi({
       id: Date.now() + Math.random(),
       tipe: 'keluar',
       nominal: nominalNumber,
       kategori: this.kategori,
       tanggal: this.tanggal
     });
-
-    localStorage.setItem('transaksi', JSON.stringify(data));
 
     this.resetForm();
     this.router.navigate(['/transaksi']);

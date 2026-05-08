@@ -28,8 +28,8 @@
   </ion-segment>
 
   <!-- 🔥 LIST -->
-  <ion-list *ngIf="dataFilter.length > 0; else kosong">
-    <ion-item *ngFor="let t of dataFilter">
+  <ion-list *ngIf="displayData.length > 0; else kosong">
+    <ion-item *ngFor="let t of displayData; trackBy: trackByTransaksi">
 
       <ion-label>
         <h2>{{ t.kategori }}</h2>
@@ -42,6 +42,12 @@
 
     </ion-item>
   </ion-list>
+
+  <!-- 🔥 INFINITE SCROLL (Untuk performa) -->
+  <ion-infinite-scroll *ngIf="displayData.length > 0" threshold="100px" (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Memuat lebih banyak...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 
   <ng-template #kosong>
     <div class="empty">
