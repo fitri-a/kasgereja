@@ -1,11 +1,11 @@
 ion-content {
-  --background: #f4f6f9;
+  --background: var(--ion-color-step-50, #f4f6f9);
 }
 
 ion-item {
   margin-bottom: 15px;
   border-radius: 12px;
-  --background: #ffffff;
+  --background: var(--ion-item-background, var(--ion-background-color, #ffffff));
   padding: 10px;
 }
 
