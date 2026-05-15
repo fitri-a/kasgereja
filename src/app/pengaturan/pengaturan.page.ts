@@ -5,6 +5,7 @@ import { AlertController, Platform } from '@ionic/angular';
 import { DataService } from '../services/data.service';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
+import { ScopedStorage } from '@daniele-rolli/capacitor-scoped-storage';
 
 @Component({
   selector: 'app-pengaturan',
@@ -28,21 +29,19 @@ export class PengaturanPage {
       const fileName = `kas-gereja-export-${new Date().getTime()}.json`;
 
       if (this.platform.is('hybrid')) {
-        // Simpan ke Cache dulu
-        const result = await Filesystem.writeFile({
-          path: fileName,
-          data: content,
-          directory: Directory.Cache,
-          encoding: Encoding.UTF8,
-        });
-
-        // Buka dialog Share agar user bisa pilih folder (Save to Files/Copy to)
-        await Share.share({
-          title: 'Ekspor Data Kas Gereja',
-          text: 'Pilih lokasi untuk menyimpan data ekspor',
-          url: result.uri,
-          dialogTitle: 'Simpan ke...',
-        });
+        // Pilih folder tujuan menggunakan Scoped Storage (SAF)
+        const { folder } = await ScopedStorage.pickFolder();
+        
+        if (folder) {
+          await ScopedStorage.writeFile({
+            path: fileName,
+            data: content,
+            folder: folder,
+            encoding: 'utf8'
+          });
+          
+          alert(`✅ Data berhasil disimpan ke folder: ${folder.name}`);
+        }
       } else {
         // Cara browser biasa
         const blob = new Blob([content], { type: 'application/json' });
